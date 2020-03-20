@@ -40,14 +40,14 @@
             this.fowlImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GiveAwayMembers = new System.Windows.Forms.DataGridView();
-            this.membersMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.removeEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pickWinner = new System.Windows.Forms.PictureBox();
-            this.giveawayName = new System.Windows.Forms.Label();
             this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.UserName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.KnownAs = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Tokens = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.membersMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.removeEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pickWinner = new System.Windows.Forms.PictureBox();
+            this.giveawayName = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GiveAwayMembers)).BeginInit();
             this.membersMenu.SuspendLayout();
@@ -142,6 +142,28 @@
             this.GiveAwayMembers.TabIndex = 1;
             this.GiveAwayMembers.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.GiveAwayMembers_CellValueChanged);
             // 
+            // id
+            // 
+            this.id.HeaderText = "id";
+            this.id.Name = "id";
+            this.id.ReadOnly = true;
+            this.id.Visible = false;
+            // 
+            // UserName
+            // 
+            this.UserName.HeaderText = "Username";
+            this.UserName.Name = "UserName";
+            // 
+            // KnownAs
+            // 
+            this.KnownAs.HeaderText = "Name";
+            this.KnownAs.Name = "KnownAs";
+            // 
+            // Tokens
+            // 
+            this.Tokens.HeaderText = "Tokens";
+            this.Tokens.Name = "Tokens";
+            // 
             // membersMenu
             // 
             this.membersMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -174,28 +196,6 @@
             this.giveawayName.Size = new System.Drawing.Size(97, 13);
             this.giveawayName.TabIndex = 3;
             this.giveawayName.Text = "xxxxxx GIVEAWAY";
-            // 
-            // id
-            // 
-            this.id.HeaderText = "id";
-            this.id.Name = "id";
-            this.id.ReadOnly = true;
-            this.id.Visible = false;
-            // 
-            // UserName
-            // 
-            this.UserName.HeaderText = "Username";
-            this.UserName.Name = "UserName";
-            // 
-            // KnownAs
-            // 
-            this.KnownAs.HeaderText = "Name";
-            this.KnownAs.Name = "KnownAs";
-            // 
-            // Tokens
-            // 
-            this.Tokens.HeaderText = "Tokens";
-            this.Tokens.Name = "Tokens";
             // 
             // MainForm
             // 

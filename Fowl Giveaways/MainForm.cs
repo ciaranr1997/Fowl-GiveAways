@@ -93,7 +93,9 @@ namespace Fowl_Giveaways
                                         + "\"id\"    INTEGER PRIMARY KEY AUTOINCREMENT,"
                                         + "\"giveaway\"  INTEGER,"
                                         + "\"item_name\" varchar(200),"
-                                        + "\"quantity\"  INTEGER);"
+                                        + "\"quantity\"  INTEGER," 
+                                        + "\"won\"  INTEGER DEFAULT 0"
+                                        + ");"
                                         + "CREATE TABLE \"settings\" ("
                                         + "	\"id\"	INTEGER PRIMARY KEY AUTOINCREMENT,"
                                         + "	\"setting_name\"	varchar(200),"
@@ -161,12 +163,12 @@ namespace Fowl_Giveaways
             LoadConfig();
         }
         /// <summary>
-        /// <para>Loads the details of all the giveaway members.</para>
+        /// <para>Loads the details of all the giveaway members who are not marked as having won an item</para>
         /// </summary>
         private void LoadDetails()
         {
             GiveAwayMembers.Rows.Clear();
-            string getMembers = "SELECT id,username,name,entry_count FROM " + GiveAwayName + "_giveaway_members order by name asc";
+            string getMembers = "SELECT id,username,name,entry_count FROM " + GiveAwayName + "_giveaway_members where winner IS NULL order by name asc";
             Database db = new Database();
             db.Open();
             SQLiteDataReader members = db.Select(getMembers);
@@ -192,96 +194,170 @@ namespace Fowl_Giveaways
         /// <param name="e"></param>
         private void pickWinner_Click(object sender, EventArgs e)
         {
+            new Thread(() =>
+            {
+                if (GiveAwayID != "-1")
+                {
+                    //check how many items there are for this 
+                    String selectItems = "SELECT id,item_name,quantity,won FROM giveaway_items where giveaway=" + GiveAwayID;
+                    Database db = new Database();
+                    db.Open();
+                    SQLiteDataReader itemRes = db.Select(selectItems);
+                    if (itemRes.HasRows)
+                    {
+                        List<Item> items = new List<Item>();
+                        while (itemRes.Read())
+                        {
+                            String itemID = itemRes.GetValue(0).ToString();
+                            String itemName = (String)itemRes.GetValue(1);
+                            Int64 itemCount = (Int64)itemRes.GetValue(2);
+                            Int64 itemsWon = (Int64)itemRes.GetValue(3);
+                            items.Add(new Item(itemID,itemName,itemCount,itemsWon));
+                        }
+                        itemRes.Close();
+                        db.Close();
+                        foreach(Item item in items)
+                        {
+                            if (item.itemsWon < item.itemCount)
+                            {
+                                item.itemCount = item.itemCount - item.itemsWon;//so we don't double gift
+                                if (item.itemCount == 1)
+                                {
+                                    GetWinner(item.itemID, item.itemName, 1, 1);
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < item.itemCount; i++)
+                                    {
+                                        int itemNo = i + 1;
+                                        GetWinner(item.itemID, item.itemName, itemNo, (int)item.itemCount);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        itemRes.Close();
+                        db.Close();
+                        MessageBox.Show("There are currently no items for this giveaway. Please add some");
+
+                        Giveaway ga = new Giveaway(this);
+                        ga.Show();
+                        ga.Setup(GiveAwayID);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("You have not got a giveaway selected. Please either create one or select one");
+                }
+            }).Start();
             
-            GetWinner("0");
         }
         /// <summary>
         /// Runs through the list of giveaway members and picks a winner. Accounts for multiple entries too.
         /// </summary>
         /// <param name="itemID"></param>
-        private void GetWinner(String itemID)
+        private void GetWinner(String itemID, String itemName, int itemNumber, int itemCount)
         {
-            new Thread(() => {
-                if (GiveAwayMembers.RowCount > 0)
+            if (GiveAwayMembers.RowCount > 1)
+            {
+                try
                 {
-                    string ents = "";
-                    try
+                    List<Entry> entries = new List<Entry>();
+                    foreach (DataGridViewRow row in GiveAwayMembers.Rows)
                     {
-                        List<Entry> entries = new List<Entry>();
-                        foreach (DataGridViewRow row in GiveAwayMembers.Rows)
+                        if (row.Cells[0].Value != null)
                         {
-                            if (row.Cells[0].Value != null)
+                            row.DefaultCellStyle.BackColor = Color.White;
+                            Int32.TryParse(row.Cells[3].Value.ToString(), out int entCount);
+                            for (int i = 0; i < entCount; i++)
                             {
-                                row.DefaultCellStyle.BackColor = Color.White;
-                                Int32.TryParse(row.Cells[3].Value.ToString(), out int entCount);
-                                for (int i = 0; i < entCount; i++)
-                                {
-                                    Entry tmpEnt = new Entry(row.Cells[0].Value.ToString(), row.Cells[1].Value.ToString(), row.Cells[2].Value.ToString(), row.Index);
-                                    ents += row.Cells[0].Value.ToString() + " " + row.Cells[1].Value.ToString() + " " + row.Cells[2].Value.ToString()+" "+ row.Index + Environment.NewLine;
-                                    entries.Add(tmpEnt);
-                                }
+                                Entry tmpEnt = new Entry(row.Cells[0].Value.ToString(), row.Cells[1].Value.ToString(), row.Cells[2].Value.ToString(), row.Index);
+                                entries.Add(tmpEnt);
                             }
                         }
-                        var random = new Random();
-                        int index = random.Next(entries.Count);
-                        int winrow = entries[index].Row;
-                        //now do all the pretty stuff
-                        int counter = 0;
-                        for (int i = 0; i < GiveAwayMembers.RowCount - 1; i++)
+                    }
+                    var random = new Random();
+                    int index = random.Next(entries.Count);
+                    int winrow = entries[index].Row;
+                    //now do all the pretty stuff
+                    int counter = 0;
+                    for (int i = 0; i < GiveAwayMembers.RowCount - 1; i++)
+                    {
+                        if (GiveAwayMembers.Rows[i].Cells[0].Value != null)
                         {
-                            if (GiveAwayMembers.Rows[i].Cells[0].Value != null)
+                            if (i != 0)
                             {
-                                if (i != 0)
-                                {
-                                    GiveAwayMembers.Rows[i - 1].DefaultCellStyle.BackColor = Color.White;
-                                    
-                                }
-                                else if (counter > 0)
-                                {
-                                    GiveAwayMembers.Rows[GiveAwayMembers.RowCount - 2].DefaultCellStyle.BackColor = Color.White;
-                                }
-                                if (i < 7)
-                                {
-                                    Invoke((MethodInvoker)delegate {
-                                        GiveAwayMembers.FirstDisplayedScrollingRowIndex = 0;
-                                    });
-                                }
-                                else
-                                {
-                                    Invoke((MethodInvoker)delegate {
-                                        GiveAwayMembers.FirstDisplayedScrollingRowIndex = i - 6;
-                                    });
-                                }
-                                GiveAwayMembers.Rows[i].DefaultCellStyle.BackColor = Color.Yellow;
-                                Thread.Sleep((int)wait);
-                                if (counter == loops && i == winrow)
-                                {
-                                    break;
-                                }
-                                else
-                                {
+                                GiveAwayMembers.Rows[i - 1].DefaultCellStyle.BackColor = Color.White;
 
-                                }
                             }
-                            if (i == GiveAwayMembers.RowCount - 2)
+                            else if (counter > 0)
                             {
-                                counter++;
-                                i = -1;
+                                GiveAwayMembers.Rows[GiveAwayMembers.RowCount - 2].DefaultCellStyle.BackColor = Color.White;
+                            }
+                            if (i < 7)
+                            {
+                                Invoke((MethodInvoker)delegate
+                                {
+                                    GiveAwayMembers.FirstDisplayedScrollingRowIndex = 0;
+                                });
+                            }
+                            else
+                            {
+                                Invoke((MethodInvoker)delegate
+                                {
+                                    GiveAwayMembers.FirstDisplayedScrollingRowIndex = i - 6;
+                                });
+                            }
+                            GiveAwayMembers.Rows[i].DefaultCellStyle.BackColor = Color.Yellow;
+                            Thread.Sleep((int)wait);
+                            if (counter == loops && i == winrow)
+                            {
+                                break;
+                            }
+                            else
+                            {
+
                             }
                         }
-                        MessageBox.Show("The Winner is... " + entries[index].Username + " :)!");
-
+                        if (i == GiveAwayMembers.RowCount - 2)
+                        {
+                            counter++;
+                            i = -1;
+                        }
                     }
-                    catch (Exception ex)
+                    //remove the person from the giveaway list so they don't get picked twice
+                    Invoke((MethodInvoker)delegate
                     {
-                        MessageBox.Show(ex.ToString());
+                        GiveAwayMembers.Rows.Remove(GiveAwayMembers.Rows[winrow]);
+                    });
+                    if (itemCount == 1)
+                    {
+                        MessageBox.Show("The Winner of " + itemName +  " is " + entries[index].Username + " :)!");
                     }
+                    else
+                    {
+                        MessageBox.Show("The Winner of " + itemName + " ("+itemNumber+"/"+ itemCount + ") is " + entries[index].Username + " :)!");
+                    }
+                    string userId = (String)GiveAwayMembers.Rows[winrow].Cells[0].Value;
+                    string updateQueries = "UPDATE " + GiveAwayName + "_giveaway_members set winner=" + itemID + " where id=" + userId+"; "
+                                         + "UPDATE giveaway_items set won=won+1 where id="+itemID;
+                    Database db = new Database();
+                    db.Open();
+                    db.Insert(updateQueries);
+                    db.Close();
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("You should probably add some giveaway members");
+                    MessageBox.Show(ex.ToString());
                 }
-            }).Start();
+            }
+            else
+            {
+                MessageBox.Show("You should probably add some giveaway members");
+            }
+            
         }
         /// <summary>
         /// <para>Updates all the fields as they're changed for the relevant member.</para>
@@ -292,64 +368,50 @@ namespace Fowl_Giveaways
         {
             if (e.ColumnIndex != 0)
             {
-               // new Thread(() =>
-                //{
-                    if (GiveAwayMembers.RowCount > 1)
+                if (GiveAwayMembers.RowCount > 1)
+                {
+                    if (GiveAwayMembers.Rows[e.RowIndex].Cells[3].Value == null)
                     {
-                        if (e.ColumnIndex == 1)
-                        {
-                            if (GiveAwayMembers.Rows[e.RowIndex].Cells[2].Value == null)
-                            {
-                                GiveAwayMembers.Rows[e.RowIndex].Cells[2].Value = GiveAwayMembers.Rows[e.RowIndex].Cells[1].Value;
-                            }
-                            if (GiveAwayMembers.Rows[e.RowIndex].Cells[3].Value == null)
-                            {
-                                GiveAwayMembers.Rows[e.RowIndex].Cells[3].Value = 1;
-                            }
-                        }
-                        else if (e.ColumnIndex == 2)
-                        {
-                            if (GiveAwayMembers.Rows[e.RowIndex].Cells[2].Value == null)
-                            {
-                                GiveAwayMembers.Rows[e.RowIndex].Cells[1].Value = GiveAwayMembers.Rows[e.RowIndex].Cells[2].Value;
-                            }
-                            if (GiveAwayMembers.Rows[e.RowIndex].Cells[3].Value == null)
-                            {
-                                GiveAwayMembers.Rows[e.RowIndex].Cells[3].Value = 1;
-                            }
-                        }
-                        Database db = new Database();
-                        db.Open();
-                        if (GiveAwayMembers.Rows[e.RowIndex].Cells[0].Value == null)
-                        {
-                            if (GiveAwayMembers.Rows[e.RowIndex].Cells[1].Value != null && GiveAwayMembers.Rows[e.RowIndex].Cells[2].Value != null)
-                            {
-                                string insert = "INSERT INTO " + GiveAwayName + "_giveaway_members (username,name,entry_count) VALUES('" + GiveAwayMembers.Rows[e.RowIndex].Cells[1].Value.ToString() + "','" + GiveAwayMembers.Rows[e.RowIndex].Cells[2].Value.ToString() + "'," + GiveAwayMembers.Rows[e.RowIndex].Cells[3].Value.ToString() + ")";
-                                db.Insert(insert);
-                                string getId = "SELECT id from " + GiveAwayName + "_giveaway_members ORDER BY ID DESC limit 1";
-                                SQLiteDataReader res = db.Select(getId);
-                                while (res.Read())
-                                {
-                                    GiveAwayMembers.Rows[e.RowIndex].Cells[0].Value = res.GetValues()[0];
-                                }
-                                res.Close();
-                            }
-                            else
-                            {
-                                MessageBox.Show((GiveAwayMembers.Rows[e.RowIndex].Cells[1].Value != null).ToString());
-                                MessageBox.Show((GiveAwayMembers.Rows[e.RowIndex].Cells[2].Value != null).ToString());
-                                MessageBox.Show("You've not supplied all the values for this row :(");
-                            }
-                        }
-                        else
-                        {
-                            string update = "UPDATE " + GiveAwayName + "_giveaway_members set username='" + GiveAwayMembers.Rows[e.RowIndex].Cells[1].Value.ToString() + "', name='" + GiveAwayMembers.Rows[e.RowIndex].Cells[2].Value.ToString() + "',entry_count=" + GiveAwayMembers.Rows[e.RowIndex].Cells[3].Value.ToString() + " WHERE id=" + GiveAwayMembers.Rows[e.RowIndex].Cells[0].Value.ToString();
-                            db.Insert(update);
-                        }
-                        db.Close();
+                        GiveAwayMembers.Rows[e.RowIndex].Cells[3].Value = 1;
                     }
-
-                //}).Start();
+                    if (e.ColumnIndex == 1)
+                    {
+                        if (GiveAwayMembers.Rows[e.RowIndex].Cells[2].Value == null)
+                        {
+                            GiveAwayMembers.Rows[e.RowIndex].Cells[2].Value = GiveAwayMembers.Rows[e.RowIndex].Cells[1].Value;
+                        }
+                    }
+                    else if (e.ColumnIndex == 2)
+                    {
+                        if (GiveAwayMembers.Rows[e.RowIndex].Cells[1].Value == null)
+                        {
+                            GiveAwayMembers.Rows[e.RowIndex].Cells[1].Value = GiveAwayMembers.Rows[e.RowIndex].Cells[2].Value;
+                        }
+                    }
+                    Database db = new Database();
+                    db.Open();
+                    if (GiveAwayMembers.Rows[e.RowIndex].Cells[0].Value == null)
+                    {
+                        if (GiveAwayMembers.Rows[e.RowIndex].Cells[1].Value != null && GiveAwayMembers.Rows[e.RowIndex].Cells[2].Value != null)
+                        {
+                            string insert = "INSERT INTO " + GiveAwayName + "_giveaway_members (username,name,entry_count) VALUES('" + GiveAwayMembers.Rows[e.RowIndex].Cells[1].Value.ToString() + "','" + GiveAwayMembers.Rows[e.RowIndex].Cells[2].Value.ToString() + "'," + GiveAwayMembers.Rows[e.RowIndex].Cells[3].Value.ToString() + ")";
+                            db.Insert(insert);
+                            string getId = "SELECT id from " + GiveAwayName + "_giveaway_members ORDER BY ID DESC limit 1";
+                            SQLiteDataReader res = db.Select(getId);
+                            while (res.Read())
+                            {
+                                GiveAwayMembers.Rows[e.RowIndex].Cells[0].Value = res.GetValues()[0];
+                            }
+                            res.Close();
+                        }
+                    }
+                    else
+                    {
+                        string update = "UPDATE " + GiveAwayName + "_giveaway_members set username='" + GiveAwayMembers.Rows[e.RowIndex].Cells[1].Value.ToString() + "', name='" + GiveAwayMembers.Rows[e.RowIndex].Cells[2].Value.ToString() + "',entry_count=" + GiveAwayMembers.Rows[e.RowIndex].Cells[3].Value.ToString() + " WHERE id=" + GiveAwayMembers.Rows[e.RowIndex].Cells[0].Value.ToString();
+                        db.Insert(update);
+                    }
+                    db.Close();
+                }
             }
         }
         /// <summary>
@@ -470,6 +532,7 @@ namespace Fowl_Giveaways
                 }
             }
         }
+        
     }
 
     public class Entry
@@ -484,6 +547,20 @@ namespace Fowl_Giveaways
             Name = name;
             Username = username;
             Row = row;
+        }
+    }
+    public class Item
+    {
+        public String itemID;
+        public String itemName;
+        public Int64 itemCount;
+        public Int64 itemsWon;
+        public Item(String id, String name, Int64 count, Int64 won)
+        {
+            itemID = id;
+            itemName = name;
+            itemCount = count;
+            itemsWon = won;
         }
     }
 }
