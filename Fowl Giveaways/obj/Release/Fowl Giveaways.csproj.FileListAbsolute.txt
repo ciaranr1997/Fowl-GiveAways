@@ -1,0 +1,21 @@
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Release\Fowl Giveaways.exe.config
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Release\Fowl Giveaways.exe
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Release\Fowl Giveaways.pdb
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Release\EntityFramework.dll
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Release\EntityFramework.SqlServer.dll
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Release\System.Data.SQLite.dll
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Release\System.Data.SQLite.EF6.dll
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Release\System.Data.SQLite.Linq.dll
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Release\EntityFramework.xml
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Release\EntityFramework.SqlServer.xml
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Release\System.Data.SQLite.xml
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Release\System.Data.SQLite.dll.config
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Release\Fowl_Giveaways.Form1.resources
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Release\Fowl_Giveaways.Properties.Resources.resources
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Release\Fowl Giveaways.csproj.GenerateResource.cache
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Release\Fowl Giveaways.csproj.CoreCompileInputs.cache
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Release\Fowl Giveaways.csproj.CopyComplete
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Release\Fowl Giveaways.exe
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Release\Fowl Giveaways.pdb
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Release\Fowl Giveaways.csprojAssemblyReference.cache
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Release\Fowl_Giveaways.Giveaway.resources

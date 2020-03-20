@@ -1,0 +1,23 @@
+*** Startup ***
+CREATE TABLE "giveaways" (
+	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"month"	varchar(20) NOT NULL,
+	"item_count"	INTEGER,
+	"allow_multi"   INTEGER
+);
+*** New giveaway ***
+CREATE TABLE "xxx_giveaway_members" (
+	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	"name"	varchar(200),
+	"username"	varchar(200),
+	"entry_count"	INTEGER,
+	"winner"	INTEGER
+);
+
+*** Giveaway Items ***
+CREATE TABLE "giveaway_items" (
+	"id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+	"item"	INTEGER,
+	"item_name"	varchar(200),
+	"quantity"	INTEGER
+);

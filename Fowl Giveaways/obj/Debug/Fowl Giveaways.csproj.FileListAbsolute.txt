@@ -1,0 +1,24 @@
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Debug\Fowl Giveaways.exe.config
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Debug\Fowl Giveaways.exe
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Debug\Fowl Giveaways.pdb
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Debug\EntityFramework.dll
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Debug\System.Data.SQLite.dll
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Debug\System.Data.SQLite.EF6.dll
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Debug\System.Data.SQLite.Linq.dll
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Debug\EntityFramework.xml
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Debug\System.Data.SQLite.xml
+C:\Users\Ciaran\source\repos\Fowl Giveaways\bin\Debug\System.Data.SQLite.dll.config
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Debug\Fowl Giveaways.csprojAssemblyReference.cache
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Debug\Fowl_Giveaways.Form1.resources
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Debug\Fowl_Giveaways.Properties.Resources.resources
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Debug\Fowl Giveaways.csproj.GenerateResource.cache
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Debug\Fowl Giveaways.csproj.CoreCompileInputs.cache
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Debug\Fowl Giveaways.csproj.CopyComplete
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Debug\Fowl Giveaways.exe
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Debug\Fowl Giveaways.pdb
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Debug\Fowl_Giveaways.Giveaway.resources
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Debug\Fowl_Giveaways.GiveAwaySelect.resources
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Debug\Fowl_Giveaways.Fowl_Import.resources
+C:\Users\Ciaran\source\repos\Fowl Giveaways\obj\Debug\Fowl_Giveaways.Config.resources
