@@ -14,14 +14,18 @@ namespace Fowl_Giveaways
     public partial class Giveaway : Form
     {
         String GiveAwayName;
-        private Form1 MyParent;
+        private MainForm MyParent;
         private string GiveAwayId = "";
-        public Giveaway(Form1 callingform)
+        public Giveaway(MainForm callingform)
         {
             InitializeComponent();
             MyParent = callingform;
         }
-
+        /// <summary>
+        /// <para>Set up the form.</para>
+        /// <para>Giveaway is defaulted as empty. If there is no ID we're creating a new one otherwise editing one</para>
+        /// </summary>
+        /// <param name="GiveAway">The giveaway ID</param>
         public void Setup(String GiveAway="")
         {
             if (GiveAway != "")
@@ -66,7 +70,11 @@ namespace Fowl_Giveaways
                 btnDelete.Hide();
             }
         }
-
+        /// <summary>
+        /// Whenever a cell is changed update the database straight away so all data is up to date.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void GiveAwayItems_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             if (GiveAwayItems.RowCount > 1)
@@ -108,7 +116,11 @@ namespace Fowl_Giveaways
 
             }
         }
-
+        /// <summary>
+        /// Create the new giveaway
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnCreate_Click(object sender, EventArgs e)
         {
             if (GAName.Text == "")
@@ -155,7 +167,7 @@ namespace Fowl_Giveaways
                                 + ");";
                 db.Insert(GACreate);
                 db.Close();
-                this.MyParent.GiveAwayDetails = GiveAwayId;
+                this.MyParent.ChangeGiveaway(GiveAwayId);
                 this.Close();
             }
         }

@@ -13,6 +13,9 @@ namespace Fowl_Giveaways
 {
     public partial class Config : Form
     {
+        /// <summary>
+        /// Loads all config options from the database
+        /// </summary>
         public Config()
         {
             InitializeComponent();
@@ -31,7 +34,11 @@ namespace Fowl_Giveaways
             settings.AllowUserToAddRows = false;
             db.Close();
         }
-
+        /// <summary>
+        /// Update the config details in real time
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void settings_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             if (settings.RowCount > 1)

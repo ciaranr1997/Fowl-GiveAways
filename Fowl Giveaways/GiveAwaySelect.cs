@@ -13,8 +13,12 @@ namespace Fowl_Giveaways
 {
     public partial class GiveAwaySelect : Form
     {
-        private Form1 MyParent;
-        public GiveAwaySelect(Form1 callingform)
+        private MainForm MyParent;
+        /// <summary>
+        /// List all available giveaways
+        /// </summary>
+        /// <param name="callingform">The parent form</param>
+        public GiveAwaySelect(MainForm callingform)
         {
             MyParent = callingform;
             InitializeComponent();
@@ -30,12 +34,16 @@ namespace Fowl_Giveaways
                 }
             }
         }
-
+        /// <summary>
+        /// Change to the new giveaway
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnSelect_Click(object sender, EventArgs e)
         {
             String item = giveAwaySel.Items[giveAwaySel.SelectedIndex].ToString();
             String GAId = item.Split('|')[0].Replace(" ","");
-            MyParent.GiveAwayDetails = GAId;
+            MyParent.ChangeGiveaway(GAId);
             this.Close();
         }
     }

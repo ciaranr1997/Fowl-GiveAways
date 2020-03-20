@@ -13,17 +13,23 @@ namespace Fowl_Giveaways
 {
     public partial class Fowl_Import : Form
     {
-        Form1 MyParent;
+        MainForm MyParent;
         String GiveAwayID;
         String GiveAwayName;
-        public Fowl_Import(Form1 parent, String gad, String gan)
+        public Fowl_Import(MainForm parent, String gad, String gan)
         {
             InitializeComponent();
             MyParent = parent;
             GiveAwayID = gad;
             GiveAwayName = gan;
         }
-
+        /// <summary>
+        /// <para>Load the data from FowlPlay's notepad into the database.</para>
+        /// <para>Only really needed for first run but still useful.</para>
+        /// <para>Data is in the format NAME x ENTRIES</para>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnImport_Click(object sender, EventArgs e)
         {
             String data = importList.Text;
