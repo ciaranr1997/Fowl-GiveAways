@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Fowl_Import));
             this.importList = new System.Windows.Forms.TextBox();
             this.btnImport = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -57,6 +58,7 @@
             this.ClientSize = new System.Drawing.Size(465, 395);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.importList);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Fowl_Import";
             this.Text = "Fowl_Import";
             this.ResumeLayout(false);

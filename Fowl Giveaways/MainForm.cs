@@ -235,6 +235,8 @@ namespace Fowl_Giveaways
                                 }
                             }
                         }
+                        Winners win = new Winners(GiveAwayID);
+                        win.ShowDialog();
                     }
                     else
                     {
@@ -441,7 +443,22 @@ namespace Fowl_Giveaways
         /// <param name="e"></param>
         private void removeEntryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            Database db = new Database();
+            db.Open();
+            GiveAwayMembers.AllowUserToAddRows = false;
+            foreach (DataGridViewCell cell in GiveAwayMembers.SelectedCells)
+            {
+                GiveAwayMembers.Rows[cell.RowIndex].Selected = true;
+            }
+            foreach (DataGridViewRow row in GiveAwayMembers.SelectedRows)
+            {
+                GiveAwayMembers.Rows.Remove(row);
+                String UID = (String)row.Cells[0].Value;
+                String del = "DELETE from " + GiveAwayName + "_giveaway_members WHERE id=" + UID;
+                db.Insert(del);
+            }
+            db.Close();
+            GiveAwayMembers.AllowUserToAddRows = true;
         }
         /// <summary>
         /// Selects giveaways from the list of giveaways. Checks there are any first.
@@ -450,7 +467,7 @@ namespace Fowl_Giveaways
         /// <param name="e"></param>
         private void selectGiveawayToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string query = "SELECT * FROM giveaways WHERE is_deleted <> 1 ORDER BY ID DESC LIMIT 1";
+            string query = "SELECT * FROM giveaways where  is_deleted is null ORDER BY ID DESC LIMIT 1";
             Database db = new Database();
             db.Open();
             SQLiteDataReader res = db.Select(query);

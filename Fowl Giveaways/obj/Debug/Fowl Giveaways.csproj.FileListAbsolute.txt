@@ -46,3 +46,4 @@ C:\Users\Ciaran\source\repos\Fowl Giveaways\Fowl Giveaways\obj\Debug\Fowl Giveaw
 C:\Users\Ciaran\source\repos\Fowl Giveaways\Fowl Giveaways\obj\Debug\Fowl Giveaways.exe
 C:\Users\Ciaran\source\repos\Fowl Giveaways\Fowl Giveaways\obj\Debug\Fowl Giveaways.pdb
 C:\Users\Ciaran\source\repos\Fowl Giveaways\Fowl Giveaways\obj\Debug\Fowl_Giveaways.MainForm.resources
+C:\Users\Ciaran\source\repos\Fowl Giveaways\Fowl Giveaways\obj\Debug\Fowl_Giveaways.Winners.resources

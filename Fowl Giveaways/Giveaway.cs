@@ -79,41 +79,54 @@ namespace Fowl_Giveaways
         {
             if (GiveAwayItems.RowCount > 1)
             {
-                if (e.ColumnIndex == 1 && GiveAwayItems.Rows[e.RowIndex].Cells[2].Value == null)
+                if (e.ColumnIndex != 0)
                 {
-                    GiveAwayItems.Rows[e.RowIndex].Cells[2].Value = 1;
-                }
-                if (GiveAwayId != "")
-                {//we want to update these in real time
-                    Database db = new Database();
-                    db.Open();
-                    if (GiveAwayItems.Rows[e.RowIndex].Cells[0].Value == null)
+                    if (e.ColumnIndex == 1 && GiveAwayItems.Rows[e.RowIndex].Cells[2].Value == null)
                     {
-                        if (GiveAwayItems.Rows[e.RowIndex].Cells[1].Value != null && GiveAwayItems.Rows[e.RowIndex].Cells[2].Value != null)
+                        GiveAwayItems.Rows[e.RowIndex].Cells[2].Value = 1;
+                    }
+                    if (GiveAwayId != "")
+                    {//we want to update these in real time
+                        Database db = new Database();
+                        db.Open();
+                        if (GiveAwayItems.Rows[e.RowIndex].Cells[0].Value == null)
                         {
-                            string insert = "INSERT INTO giveaway_items (giveaway,item_name,quantity) VALUES(" + GiveAwayId+",'"+ GiveAwayItems.Rows[e.RowIndex].Cells[1].Value.ToString()+ "',"+ GiveAwayItems.Rows[e.RowIndex].Cells[2].Value.ToString() + ")";
-                            db.Insert(insert);
-                            string getId = "SELECT id from giveaway_items ORDER BY ID DESC LIMIT 1";
-                            SQLiteDataReader res = db.Select(getId);
-                            while (res.Read())
+                            if (GiveAwayItems.Rows[e.RowIndex].Cells[1].Value != null && GiveAwayItems.Rows[e.RowIndex].Cells[2].Value != null)
                             {
-                                GiveAwayItems.Rows[e.RowIndex].Cells[0].Value = res.GetValues()[0];
+                                string insert = "INSERT INTO giveaway_items (giveaway,item_name,quantity) VALUES(" + GiveAwayId + ",'" + GiveAwayItems.Rows[e.RowIndex].Cells[1].Value.ToString() + "'," + GiveAwayItems.Rows[e.RowIndex].Cells[2].Value.ToString() + ")";
+                                db.Insert(insert);
+                                string getId = "SELECT id from giveaway_items ORDER BY ID DESC LIMIT 1";
+                                SQLiteDataReader res = db.Select(getId);
+
+                                while (res.Read())
+                                {
+                                    GiveAwayItems.Rows[e.RowIndex].Cells[0].Value = res.GetValues()[0];
+                                }
+                                res.Close();
                             }
-                            res.Close();
+                            else
+                            {
+                                MessageBox.Show("You've not supplied all the values for this row :(");
+                            }
+                            db.Close();
                         }
                         else
                         {
-                            MessageBox.Show("You've not supplied all the values for this row :(");
+                            string update = "UPDATE giveaway_items set item_name='" + GiveAwayItems.Rows[e.RowIndex].Cells[1].Value.ToString() + "', quantity=" + GiveAwayItems.Rows[e.RowIndex].Cells[2].Value.ToString() + " WHERE id=" + GiveAwayItems.Rows[e.RowIndex].Cells[0].Value.ToString();
+                            try
+                            {
+                                db.Insert(update);
+                                db.Close();
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(ex.ToString());
+                            }
                         }
                     }
-                    else
-                    {
-                        string update = "UPDATE giveaway_items set item_name='" + GiveAwayItems.Rows[e.RowIndex].Cells[1].Value.ToString() + "', quantity=" + GiveAwayItems.Rows[e.RowIndex].Cells[2].Value.ToString() +" WHERE id=" + GiveAwayItems.Rows[e.RowIndex].Cells[0].Value.ToString();
-                        db.Insert(update);
-                    }
-                    db.Close();
-                }
 
+                }
+                
             }
         }
         /// <summary>
@@ -142,7 +155,7 @@ namespace Fowl_Giveaways
                     {
                         GiveAwayId = res.GetValues()[0].ToString();
                     }
-                    this.Text = GiveAwayName;
+                    this.Text = GiveAwayName+" Winners";
                     res.Close();
                 }
                 if (itemCount>0)
@@ -151,7 +164,7 @@ namespace Fowl_Giveaways
                     //insert items
                     foreach (DataGridViewRow row in GiveAwayItems.Rows)
                     {
-                        if (row.Cells[0] != null&& row.Cells[0].Value!=null)
+                        if (row.Cells[1] != null&& row.Cells[1].Value!=null)
                         {
                             addItem = "INSERT INTO giveaway_items (giveaway,item_name,quantity) VALUES (" + GiveAwayId + ",'" + row.Cells[1].Value.ToString() + "'," + row.Cells[2].Value.ToString() + ")";
                             db.Insert(addItem);
@@ -175,6 +188,41 @@ namespace Fowl_Giveaways
         private void btnDelete_Click(object sender, EventArgs e)
         {
             
+        }
+
+        private void removeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GiveAwayItems.AllowUserToAddRows = false;
+            if (GiveAwayId == "-1")
+            {
+                foreach (DataGridViewCell cell in GiveAwayItems.SelectedCells)
+                {
+                    GiveAwayItems.Rows[cell.RowIndex].Selected = true;
+                }
+                foreach (DataGridViewRow row in GiveAwayItems.SelectedRows)
+                {
+                    GiveAwayItems.Rows.Remove(row);
+                }
+            }
+            else
+            {
+                Database db = new Database();
+                db.Open();
+                foreach (DataGridViewCell cell in GiveAwayItems.SelectedCells)
+                {
+                    GiveAwayItems.Rows[cell.RowIndex].Selected = true;
+                }
+                foreach (DataGridViewRow row in GiveAwayItems.SelectedRows)
+                {
+                    GiveAwayItems.Rows.Remove(row);
+                    String UID = (String)row.Cells[0].Value;
+                    String del = "DELETE from giveaway_items where id=" + UID;
+                    db.Insert(del);
+                }
+                db.Close();
+            }
+            GiveAwayItems.AllowUserToAddRows = true;
+
         }
     }
 }
